@@ -41,6 +41,7 @@ resource "aws_launch_configuration" "web" {
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.web.id]
   user_data       = file("user_data.sh")
+  associate_public_ip_address = true
 
   lifecycle {
     create_before_destroy = true
@@ -56,6 +57,7 @@ resource "aws_autoscaling_group" "web" {
   vpc_zone_identifier   = [aws_default_subnet.default_az1.id,aws_default_subnet.default_az2.id]
   health_check_type     = "ELB"
   load_balancers        = [aws_elb.web.name]
+  
 
   dynamic "tag" {
       for_each = {
