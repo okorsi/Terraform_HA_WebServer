@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "ca-central-1"
+  region = "ap-southeast-2"
 }
 
 data "aws_availability_zones" "available" {}
@@ -36,7 +36,8 @@ resource "aws_security_group" "web" {
 }
 
 resource "aws_launch_configuration" "web" {
-  name            = "WebServer-Highly-Available-LC"
+  #name            = "WebServer-Highly-Available-LC"
+  name_prefix     = "WebServer-Highly-Available-LC-"
   image_id        = data.aws_ami.latest_amazon_linux.id
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.web.id]
@@ -49,7 +50,7 @@ resource "aws_launch_configuration" "web" {
 }
 
 resource "aws_autoscaling_group" "web" {
-  name                  = "WebServer-Highly-Available-ASG"
+  name                  = "ASG-${aws_launch_configuration.web.name}"
   launch_configuration  = aws_launch_configuration.web.name
   min_size              = 2
   max_size              = 2
@@ -57,12 +58,12 @@ resource "aws_autoscaling_group" "web" {
   vpc_zone_identifier   = [aws_default_subnet.default_az1.id,aws_default_subnet.default_az2.id]
   health_check_type     = "ELB"
   load_balancers        = [aws_elb.web.name]
-  
+
 
   dynamic "tag" {
       for_each = {
         Name       = "WebServer in ASG"
-        Owner      = "Oleksii"
+        Owner      = "Oleksii Korsikov"
         TAGKEY     = "TAGVALUE"
       }
     content {
@@ -77,7 +78,7 @@ resource "aws_autoscaling_group" "web" {
 }
 
 resource "aws_elb" "web" {
-    name                  = "WebServer-HA-ELB"
+    name                  = "WebServer-Highly-Availabe-ELB"
     availability_zones    = [data.aws_availability_zones.available.names[0],data.aws_availability_zones.available.names[1]]
     security_groups       = [aws_security_group.web.id]
     listener {
