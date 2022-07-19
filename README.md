@@ -29,4 +29,10 @@ chkconfig httpd on
 ````
 
 ### In the file main.tf we describe the infrastructure in AWS:
-* 
+* aws_availability_zones
+* aws_security_group
+* aws_launch_configuration
+* aws_autoscaling_group
+* aws_elb
+* aws_default_subnet
+* web_loadbalancer_url
