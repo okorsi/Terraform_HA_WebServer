@@ -28,3 +28,5 @@ sudo service httpd start
 chkconfig httpd on
 ````
 
+### In the file main.tf we describe the infrastructure in AWS:
+* 
